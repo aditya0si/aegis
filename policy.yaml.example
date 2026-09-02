@@ -1,0 +1,23 @@
+# AEGIS Policy — per-agent allowlist/denylist + global controls
+version: 1
+global:
+  deny_tools: ["exec_shell", "delete_database"]
+  secrets_redaction: true
+  injection_block: true
+  max_tool_calls_per_minute: 60
+
+agents:
+  research-agent:
+    allowlist: ["search", "read_file", "chem.search", "chem.similarity"]
+    denylist: ["exec_shell", "write_file"]
+    rate_limit: 30  # calls/min
+    required_args:
+      search: ["query"]
+  coder-agent:
+    allowlist: ["read_file", "write_file", "exec_python", "search"]
+    denylist: ["delete_database", "send_email"]
+    rate_limit: 45
+  default:
+    allowlist: ["search", "read_file"]
+    denylist: ["exec_shell", "delete_database", "write_file"]
+    rate_limit: 20

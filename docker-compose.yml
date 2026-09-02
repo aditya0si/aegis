@@ -1,0 +1,39 @@
+services:
+  aegis:
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./policy.yaml.example:/app/policy.yaml:ro
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - AEGIS_POLICY_PATH=/app/policy.yaml
+    depends_on:
+      - jaeger
+    command: ["aegis", "proxy", "--port", "8001", "--host", "0.0.0.0", "--policy", "/app/policy.yaml"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  prometheus:
+    image: prom/prometheus:v2.53.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    ports:
+      - "4318:4318"
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    depends_on:
+      - jaeger
