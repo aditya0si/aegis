@@ -1,16 +1,18 @@
 """SQLite store for trajectories + rolling baseline."""
 from __future__ import annotations
-import sqlite3
+
 import json
+import os
+import sqlite3
 import time
 from pathlib import Path
 from typing import Any
 
-DB_PATH = Path("C:/Users/oliad/Desktop/aegis/aegis.db")
-# also support env
-import os
-if os.getenv("AEGIS_DB_PATH"):
-    DB_PATH = Path(os.getenv("AEGIS_DB_PATH"))
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# DB lives at the repo root by default, so it works on any machine/CI runner.
+# Override with AEGIS_DB_PATH.
+DB_PATH = Path(os.getenv("AEGIS_DB_PATH") or (REPO_ROOT / "aegis.db"))
 
 def _conn():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)

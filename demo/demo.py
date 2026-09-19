@@ -1,8 +1,10 @@
 """AEGIS live demo — runs proxy in-process and shows allow vs block, no server needed."""
 from fastapi.testclient import TestClient
-from aegis.proxy.app import create_app
+
 from aegis.config import default_policy
 from aegis.eval.redteam import run_harness
+from aegis.proxy.app import create_app
+
 
 def main():
     print("=== AEGIS Live Demo (no API keys, no Docker) ===\n")

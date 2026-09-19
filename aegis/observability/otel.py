@@ -1,7 +1,9 @@
 """OTel setup — no-op if OTel not configured."""
 from __future__ import annotations
-import os
+
 import logging
+import os
+
 log = logging.getLogger(__name__)
 
 _tracer = None
@@ -10,9 +12,12 @@ def setup_otel(service_name: str = "aegis"):
     global _tracer
     try:
         from opentelemetry import trace
-        from opentelemetry.sdk.trace import TracerProvider
-        from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
         from opentelemetry.sdk.resources import Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import (
+            BatchSpanProcessor,
+            ConsoleSpanExporter,
+        )
         endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
         resource = Resource.create({"service.name": service_name})
         provider = TracerProvider(resource=resource)
@@ -20,7 +25,9 @@ def setup_otel(service_name: str = "aegis"):
         provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
         if endpoint:
             try:
-                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+                    OTLPSpanExporter,
+                )
                 otlp = OTLPSpanExporter(endpoint=endpoint, insecure=True)
                 provider.add_span_processor(BatchSpanProcessor(otlp))
             except Exception as e:
@@ -29,7 +36,7 @@ def setup_otel(service_name: str = "aegis"):
         _tracer = trace.get_tracer(service_name)
         # instrument FastAPI if available
         try:
-            from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+            pass
             # instrument later when app created
         except Exception:
             pass

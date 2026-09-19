@@ -1,10 +1,12 @@
 """CI Gate — blocks PR if red-team pass rate < threshold or p95 > limit. OTel spans."""
 from __future__ import annotations
+
 import argparse
 import sys
-from pathlib import Path
+
 from aegis.eval.redteam import run_harness
 from aegis.observability.otel import get_tracer
+
 
 def main():
     p = argparse.ArgumentParser(description="AEGIS CI Gate")
@@ -35,7 +37,7 @@ def main():
             span.set_attribute("gate.passed", False)
             failed = True
         if not failed:
-            print(f"[GATE] ✅ PASSED — all thresholds met")
+            print("[GATE] ✅ PASSED — all thresholds met")
             span.set_attribute("gate.passed", True)
         sys.exit(1 if failed else 0)
 

@@ -1,10 +1,12 @@
 """Prompt Injection Detector — 3 layers: heuristic, lexical, LLM-judge fallback."""
 from __future__ import annotations
-import re
-import math
+
 import base64
+import math
+import re
 from collections import Counter
 from typing import Any
+
 from pydantic import BaseModel, Field
 
 HEURISTIC_PATTERNS: list[tuple[str, str, float]] = [

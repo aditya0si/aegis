@@ -1,8 +1,8 @@
 """AEGIS CLI — typer."""
 from __future__ import annotations
-import uvicorn
+
 import typer
-from pathlib import Path
+import uvicorn
 
 app = typer.Typer(help="AEGIS — Agentic AI Security Mesh")
 

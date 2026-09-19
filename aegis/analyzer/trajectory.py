@@ -1,12 +1,13 @@
 """Trajectory Analyzer — detects anomalous agent traces."""
 from __future__ import annotations
-import re
+
 import json
+import re
 import time
-import sqlite3
-from pathlib import Path
 from typing import Any
+
 from pydantic import BaseModel, Field
+
 
 # --- Models ---
 class Step(BaseModel):
@@ -162,7 +163,6 @@ def detect_hallucinated_args(traj: Trajectory) -> list[Anomaly]:
     for idx, s in enumerate(traj.steps):
         args = s.arguments
         # hallucinated if args contain fabricated patterns like "fak3_id_12345" without verification or tool schema violation
-        arg_str = json.dumps(args)
         # detect hallucinated IDs: tool args with id that looks random and not previously seen
         if isinstance(args, dict):
             for k, v in args.items():

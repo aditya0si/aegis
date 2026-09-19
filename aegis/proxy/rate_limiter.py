@@ -1,7 +1,9 @@
 """Token-bucket rate limiter per agent+tool."""
 from __future__ import annotations
+
 import time
 from collections import defaultdict, deque
+
 
 class RateLimiter:
     def __init__(self, default_rpm: int = 60):
