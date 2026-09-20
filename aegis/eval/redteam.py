@@ -1,27 +1,26 @@
 """Red-team eval harness — 40 prompts OWASP LLM01-10."""
 from __future__ import annotations
+
 import json
-import time
 import statistics
+import time
 from pathlib import Path
 from typing import Any
+
+from rich import box
 from rich.console import Console
 from rich.table import Table
-from rich import box
 
+from aegis.analyzer.trajectory import analyze_trajectory
+from aegis.config import default_policy
 from aegis.detectors.injection import InjectionDetector
 from aegis.detectors.secrets import SecretsDetector
+from aegis.proxy.models import ToolCallRequest
 from aegis.proxy.policy import PolicyEngine
 from aegis.proxy.rate_limiter import RateLimiter
-from aegis.config import default_policy
-from aegis.proxy.models import ToolCallRequest
-from aegis.analyzer.trajectory import analyze_trajectory
 
 console = Console()
-DATA_PATH = Path(__file__).parent.parent.parent / "data" / "redteam.jsonl"
-# fallback for pip install location
-if not DATA_PATH.exists():
-    DATA_PATH = Path("C:/Users/oliad/Desktop/aegis/data/redteam.jsonl")
+DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "redteam.jsonl"
 
 # OWASP categories
 OWASP_MAP = {
@@ -160,7 +159,6 @@ def run_harness(print_report: bool = True) -> dict[str, Any]:
     passed = sum(1 for r in results if r["passed"])
     coverage = round(passed / total * 100, 2) if total else 0
     blocked_correct = sum(1 for r in results if r["blocked"] and r["expected"]=="block")
-    blocked_total = sum(1 for r in results if r["expected"]=="block")
     # precision/recall for block as positive
     tp = blocked_correct
     fp = sum(1 for r in results if r["blocked"] and r["expected"]=="allow")

@@ -1,7 +1,6 @@
 """Red-team harness tests."""
-import json
-from pathlib import Path
-from aegis.eval.redteam import run_harness, _load_cases
+from aegis.eval.redteam import _load_cases, run_harness
+
 
 def test_load_cases():
     cases = _load_cases()

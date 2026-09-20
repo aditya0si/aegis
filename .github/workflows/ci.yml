@@ -1,24 +1,56 @@
-name: AEGIS CI Gate
+name: CI
+
+# Trigger note (this is why the previous workflow never ran):
+# the repository's default branch is `master`, but the old config filtered on
+# `branches: [main]` - a branch that has never existed here - so no push or
+# pull_request event could ever match it. `push` now runs on every branch and
+# `pull_request` targets `master`, so a change always gets a run.
 on:
   push:
-    branches: [main]
   pull_request:
-    branches: [main]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  gate:
+  test:
+    name: tests + gates (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Install deps
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package + dev deps
         run: |
-          pip install -e ".[dev]"
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Import smoke
+        run: python -c "import aegis, aegis.proxy.app, aegis.eval.redteam; print('aegis imports OK')"
+
       - name: Tests
         run: pytest tests/ -v --tb=short
-      - name: Red-team gate
+
+      - name: Red-team eval gate
         run: python -m aegis.eval.redteam --report --fail-under 95 --max-p95-ms 200
-      - name: Gate check (secondary)
+
+      - name: CI gate script (secondary)
         run: python scripts/gate.py --fail-under 95 --max-p95-ms 200

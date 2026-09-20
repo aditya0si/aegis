@@ -1,9 +1,9 @@
 """Policy engine — fail-closed."""
 from __future__ import annotations
-import time
-from typing import Any
-from aegis.config import Policy, AgentPolicy
+
+from aegis.config import AgentPolicy, Policy
 from aegis.proxy.models import ToolCallRequest
+
 
 class PolicyEngine:
     def __init__(self, policy: Policy):

@@ -1,6 +1,6 @@
 # AEGIS — Agentic AI Security Mesh
 
-[![CI](https://github.com/aditya-singh/aegis/actions/workflows/ci.yml/badge.svg)](https://github.com/aditya-singh/aegis/actions/workflows/ci.yml)
+[![CI](https://github.com/aditya0si/aegis/actions/workflows/ci.yml/badge.svg)](https://github.com/aditya0si/aegis/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue)](https://python.org)
 [![Tests](https://img.shields.io/badge/tests-74%20passed-brightgreen)](#latest-eval-real-run-windows-11-python-31116)
 [![OWASP](https://img.shields.io/badge/OWASP%20LLM%20Top--10-100%25-brightgreen)](#owasp-llm-top-10-coverage)

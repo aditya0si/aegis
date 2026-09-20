@@ -1,6 +1,4 @@
 """Proxy tests — allowlist, denylist, rate limiting, secrets, injection."""
-import pytest
-from fastapi.testclient import TestClient
 
 def test_health(client):
     r = client.get("/health")

@@ -1,9 +1,10 @@
 """Secrets & PII Vault — regex + entropy + allowlist."""
 from __future__ import annotations
-import re
+
 import math
+import re
 from collections import Counter
-from typing import Any
+
 from pydantic import BaseModel, Field
 
 SECRET_PATTERNS: list[tuple[str, str, str]] = [

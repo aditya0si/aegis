@@ -1,7 +1,10 @@
 """Tests for injection detector."""
-import pytest
 import base64
+
+import pytest
+
 from aegis.detectors.injection import InjectionDetector
+
 
 @pytest.fixture
 def detector():

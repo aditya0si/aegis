@@ -1,23 +1,23 @@
 """FastAPI proxy — MCP-aware, fail-closed, OTel instrumented."""
 from __future__ import annotations
-import time
+
 import json
 import logging
-from typing import Any
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse
+import time
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 
 from aegis import __version__
-from aegis.config import Policy, load_policy, default_policy
-from aegis.proxy.models import ToolCallRequest, MCPRequest
-from aegis.proxy.policy import PolicyEngine
-from aegis.proxy.rate_limiter import RateLimiter
+from aegis.config import Policy, default_policy, load_policy
 from aegis.detectors.injection import InjectionDetector
 from aegis.detectors.secrets import SecretsDetector
-from aegis.observability.otel import setup_otel, get_tracer
 from aegis.observability.metrics import inc, observe
+from aegis.observability.otel import get_tracer
+from aegis.proxy.models import MCPRequest, ToolCallRequest
+from aegis.proxy.policy import PolicyEngine
+from aegis.proxy.rate_limiter import RateLimiter
 
 log = logging.getLogger(__name__)
 _START = time.time()
@@ -106,7 +106,6 @@ def create_app(policy: Policy | None = None, policy_path: str | None = None) -> 
             if policy.global_.injection_block:
                 combined_text = " ".join([str(v) for v in req.arguments.values() if isinstance(v, str)])
                 # also check tool name weirdness
-                check_text = combined_text or req.tool
                 if combined_text:
                     inj_result = injection.detect(combined_text)
                     if inj_result.is_injection:

@@ -1,7 +1,7 @@
 """Analyzer tests."""
-import pytest
-from aegis.analyzer.trajectory import analyze_trajectory, Trajectory, Step
-from aegis.analyzer.store import store_trajectory, get_baseline, get_recent, clear_db
+from aegis.analyzer.store import clear_db, get_baseline, get_recent, store_trajectory
+from aegis.analyzer.trajectory import Step, Trajectory, analyze_trajectory
+
 
 def test_normal_trajectory_allow():
     traj = Trajectory(agent_id="research-agent", steps=[Step(tool="search", arguments={"query":"hi"}), Step(tool="read_file", arguments={"path":"a.pdf"})])

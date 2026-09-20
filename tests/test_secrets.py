@@ -1,6 +1,8 @@
 """Tests for secrets/PII vault."""
 import pytest
+
 from aegis.detectors.secrets import SecretsDetector
+
 
 @pytest.fixture
 def detector():
@@ -99,7 +101,8 @@ def test_jwt(detector):
 def test_credit_card(detector):
     txt = "card 4111 1111 1111 1111"
     res = detector.scan(txt)
-    # test card 4111... is allowlisted test card, should be skipped
+    # test card 4111... is an allowlisted test card, should be skipped
+    assert res.has_secrets is False, "allowlisted test card must not be flagged"
     # Use different number
     txt2 = "card 4539 1488 0343 6467"
     res2 = detector.scan(txt2)

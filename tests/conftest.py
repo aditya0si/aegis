@@ -1,9 +1,11 @@
 """AEGIS tests conftest."""
 import pytest
 from fastapi.testclient import TestClient
-from aegis.proxy.app import create_app
-from aegis.config import default_policy
+
 from aegis.analyzer.store import clear_db
+from aegis.config import default_policy
+from aegis.proxy.app import create_app
+
 
 @pytest.fixture
 def policy():

@@ -1,9 +1,13 @@
 """AEGIS configuration."""
 from __future__ import annotations
+
 import os
 from pathlib import Path
-from pydantic import BaseModel, Field
+
 import yaml
+from pydantic import BaseModel, Field
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 class GlobalPolicy(BaseModel):
     deny_tools: list[str] = Field(default_factory=list)
@@ -30,7 +34,7 @@ def load_policy(path: str | Path | None = None) -> Policy:
     p = Path(path)
     if not p.exists():
         # look relative to repo root
-        alt = Path("C:/Users/oliad/Desktop/aegis") / path if not Path(path).is_absolute() else p
+        alt = p if p.is_absolute() else REPO_ROOT / p
         if alt.exists():
             p = alt
         else:

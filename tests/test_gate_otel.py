@@ -3,20 +3,22 @@ import subprocess
 import sys
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 def test_gate_passes():
-    result = subprocess.run([sys.executable, "scripts/gate.py", "--fail-under", "95", "--max-p95-ms", "200"], capture_output=True, text=True, cwd="C:/Users/oliad/Desktop/aegis")
+    result = subprocess.run([sys.executable, "scripts/gate.py", "--fail-under", "95", "--max-p95-ms", "200"], capture_output=True, text=True, cwd=str(REPO_ROOT))
     assert result.returncode == 0, f"gate failed: {result.stdout}\n{result.stderr}"
     assert "PASSED" in result.stdout or "Coverage" in result.stdout
 
 def test_gate_fails_high_threshold():
-    result = subprocess.run([sys.executable, "scripts/gate.py", "--fail-under", "100"], capture_output=True, text=True, cwd="C:/Users/oliad/Desktop/aegis")
+    result = subprocess.run([sys.executable, "scripts/gate.py", "--fail-under", "100"], capture_output=True, text=True, cwd=str(REPO_ROOT))
     # might pass if coverage is 100, so check either 0 or 1 but should handle
     # if our coverage is 100, then 100 threshold passes; if not 100, fails
     # Ensure process doesn't crash
     assert result.returncode in {0,1}
 
 def test_otel_setup():
-    from aegis.observability.otel import setup_otel, get_tracer
+    from aegis.observability.otel import get_tracer, setup_otel
     tracer = setup_otel("test")
     assert tracer is not None
     tr2 = get_tracer("test2")
@@ -26,7 +28,7 @@ def test_otel_setup():
         span.set_attribute("test", 123)
 
 def test_metrics_inc_observe():
-    from aegis.observability.metrics import inc, observe, snapshot, reset
+    from aegis.observability.metrics import inc, observe, reset, snapshot
     reset()
     inc("test_counter")
     inc("test_counter", 2)
@@ -38,13 +40,13 @@ def test_metrics_inc_observe():
     reset()
 
 def test_cli_version():
-    result = subprocess.run([sys.executable, "-m", "aegis.cli", "version"], capture_output=True, text=True, cwd="C:/Users/oliad/Desktop/aegis")
+    result = subprocess.run([sys.executable, "-m", "aegis.cli", "version"], capture_output=True, text=True, cwd=str(REPO_ROOT))
     # typer version command may not be --? Check
     # Actually aegis cli uses typer, version subcommand
     assert result.returncode == 0 or "aegis" in result.stdout.lower() or "0.1.0" in result.stdout
 
 def test_policy_load():
-    from aegis.config import load_policy, default_policy
+    from aegis.config import default_policy, load_policy
     p = default_policy()
     assert "research-agent" in p.agents
     # load from example

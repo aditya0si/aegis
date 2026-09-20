@@ -1,8 +1,8 @@
 """Simple in-memory metrics."""
 from __future__ import annotations
-import time
-from collections import Counter, defaultdict
+
 import threading
+from collections import Counter, defaultdict
 
 _counters: Counter = Counter()
 _latencies: defaultdict[str, list[float]] = defaultdict(list)

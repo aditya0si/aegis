@@ -1,6 +1,6 @@
 """Metrics helpers for eval."""
 from __future__ import annotations
-import statistics
+
 
 def percentile(data: list[float], p: float) -> float:
     if not data:
